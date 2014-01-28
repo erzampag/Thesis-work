@@ -1,17 +1,20 @@
-function [file, max_rate_absolute, DS_indices, index, DS_index, mean_rates, max_rates...
+function [file, DS_indices, index, DS_index, mean_rates, max_rates, high_index...
     color, x_vector, y_vector, mean_rates_spatial, mean_rates_spatial_norm,mean_rates_temporal...
    mean_rates_temporal_norm, max_slice_spatial, max_slice_spatial_norm, max_slice_temporal...
    max_slice_temporal_norm, concat_no_orient, concat_no_orient_norm, color_long, mean_rate_for_each_dir...
-   ] = calculate_DS_param_props(date, data_file)
+   concat_orient, concat_orient_norm] = calculate_DS_param_props(date, data_file)
 
 % separating out the property calculations so that it's not in the same place as
-% graphing
+% graphing - i think this is better than keeping the parameters calculated
+% by the graph they are used it if i end up wanting to use the same
+% paramter in a different graph 
 
 file = (['/Users/erinzampaglione/Documents/Lab_work/DS_param/' date '/' data_file '.mat']);
 load(file)
 
 
-%%
+%% DS_indices are made as just a first cut to the hand-picking of DS neurons
+
 max_rate_absolute = cell(length(idList),1);
 % build max spike rate array
 for q  = 1: length(idList)
@@ -21,12 +24,10 @@ for q  = 1: length(idList)
 %        mean_rate_absolute     
         end
     end
-    
-    
 end
 
-%% 
-DS_indices = cell(length(idList),1);
+DS_indices = cell(length(idList),1); % for each neuron, we have a list of which spatial and temporal indices were automatically 
+                                       % determined to be DS
 
 for i  = 1 : length(idList)
     %    max_DSI(i) = max(max(DSI{i}));
@@ -49,7 +50,9 @@ index = (1: length(idList))';
 
 DS_index = index(logical(DS_neuronIDs));
 
-mean_rates = cell(length(idList), 1);
+%% mean rates is the average response over all directions for a given spat/temp
+
+mean_rates = cell(length(idList), 1); % 
 max_rates = cell(length(idList), 1);
 for q = 1:length(idList)
     for i = 1: length(spatial)
@@ -60,8 +63,6 @@ for q = 1:length(idList)
     end
 end
  color = [0 0 0; 0 0 1; 1 0 0; 0 1 0; 1 0 1; 0 1 1; 1 1 0]; %kbrgmcy
-
-
 
 
 %% remake X and Y's for compass plot
@@ -106,43 +107,9 @@ for i = 1 : length(idList)
     
 end
 
-%% make the concatinated vector like in Matt's thesis
-
-concat_no_orient = zeros(length(idList), length(spatial)*length(temporal));
-concat_no_orient_norm = zeros(length(idList), length(spatial)*length(temporal));
-
-
-for i = 1 : length(idList)
-  concat_no_orient(i, :) = cat(2, mean_rates{i}(1,:), mean_rates{i}(2,:),...
-      mean_rates{i}(3,:), mean_rates{i}(4,:), mean_rates{i}(5,:));
-  
-  concat_no_orient_norm(i,:) = concat_no_orient(i,:)/sum(concat_no_orient(i,:));
-        
-end
-
-color_long = zeros(27,3);
-n = 0;
-for i = [0,0.5,1]
-    for j = [0,0.5,0.75]
-        for k = [0,0.5,1]
-            n = n+1;
-        color_long(n,:) = [i, j, k];  
-        end
-    end
-end
-color_long = cat(1,color_long, color_long);
-
-
-%% average over all spat/temps, to just have direction
-keyboard
-mean_rate_for_each_dir = zeros(length(idList), length(spike_rate_all_orientation{q}(1,1,:)));
-for q = 1: length(idList)
-    
-    for k = 1:length(spike_rate_all_orientation{q}(1,1,:))
-       mean_rate_for_each_dir(q,k) =  mean(mean(spike_rate_all_orientation{q}(:,:,k),1),2);
-    end
-    
-end
+% additionally, what i'd like out of this is WHICH temp/spat period
+% corresponds to the max and make ERROR bars to indicate if that cell is
+% reliable
 
 %% find the mean rate for just the few sp/temps that surround the highest point
 
@@ -157,7 +124,70 @@ for q = 1: length(idList)
 %     
 end
 
+% % % % (high_index(q,1)-1)+(high_index(q,2)-1)*5 +1 % CONVERT TO VERT INDEX
+
+%% make the concatinated vector like in Matt's thesis
+
+concat_no_orient = zeros(length(idList), length(spatial)*length(temporal));
+concat_no_orient_norm = zeros(length(idList), length(spatial)*length(temporal));
 
 
+for i = 1 : length(idList)
+  concat_no_orient(i, :) = cat(2, mean_rates{i}(1,:), mean_rates{i}(2,:),...
+      mean_rates{i}(3,:), mean_rates{i}(4,:), mean_rates{i}(5,:));
+  
+  concat_no_orient_norm(i,:) = concat_no_orient(i,:)/sum(concat_no_orient(i,:));
+        
+end
+
+%% Make the concatinated vector like in Matt's thesis but with the Directional information included
+
+concat_orient = zeros(length(idList), length(spatial)*length(temporal)*length(orientation));
+concat_orient_norm = zeros(length(idList), length(spatial)*length(temporal)*length(orientation));
+
+for q = 1:length(idList)
+    temp_vector = [];
+    for i = 1:length(spatial)
+        for j = 1:length(temporal)
+            temp_vector = [temp_vector squeeze(spike_rate_all_orientation{q}(i,j,:))'];
+        end 
+        
+    end
+    concat_orient(q,:) = temp_vector;
+    concat_orient_norm(q,:) = temp_vector/sum(temp_vector);
+end
+    
+
+
+
+%% average over all spat/temps, to just have direction
+% keyboard
+mean_rate_for_each_dir = zeros(length(idList), length(spike_rate_all_orientation{q}(1,1,:)));
+for q = 1: length(idList)
+    
+    for k = 1:length(spike_rate_all_orientation{q}(1,1,:))
+       mean_rate_for_each_dir(q,k) =  mean(mean(spike_rate_all_orientation{q}(:,:,k),1),2);
+    end
+    
+end
+
+
+%% color vector used for plotting all the concatinated vectors on one graph so that we can
+% distinguish individual 
+
+color_long = zeros(27,3);
+n = 0;
+for i = [0,0.5,1]
+    for j = [0,0.5,0.75]
+        for k = [0,0.5,1]
+            n = n+1;
+        color_long(n,:) = [i, j, k];  
+        end
+    end
+end
+
+figure
+scatter(1:length(color_long), 1:length(color_long),100, color_long, 'filled')
+color_long = cat(1,color_long, color_long);
 
 end

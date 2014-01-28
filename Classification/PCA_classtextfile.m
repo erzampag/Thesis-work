@@ -1,5 +1,8 @@
 function [] = PCA_classtextfile(date, data_file, PCA_indices, idList)
 
+% this function takes only the WHOLE retina list and makes a vision-usable
+% textfile to the clusters can be visualized.
+keyboard
   
   cluster_num = zeros(length(idList),1);
   

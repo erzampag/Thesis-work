@@ -475,7 +475,7 @@ for i = 45
         %         keyboard
         
         
-        %% AND print each neuron
+        %% AND print each neuron (I'm gonna stick this in MultibarAnalysis too i guess?
         orientation = [0:22.5:360-22.5];
         for q = DScellsindex_all'
             figure

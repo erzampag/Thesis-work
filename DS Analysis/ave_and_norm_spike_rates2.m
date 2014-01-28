@@ -36,7 +36,7 @@ for i  = 1: length(spatial)
     end
 end
 
-keyboard
+% keyboard
 
 % Calculate error on the means for the true and norm spike rates assuming
 % N distibuted as a Poisson process

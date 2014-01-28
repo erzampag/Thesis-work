@@ -506,6 +506,27 @@ keyboard
         
         set(gcf, 'PaperPosition', [0,0,12,12]);
 print('-depsc', [A '/' 'DS_PolarPlot'])
+
+% each tuning curve
+        for q = DScellsindex'
+            figure
+            
+            p = polar([orientation(:)*pi/180'; orientation(1)],...
+                [spike_rate_all_orientation{q}; spike_rate_all_orientation{q}(1)]);
+            
+            title(['Spike Rates for Neuron ' num2str(idList(q)) ', Index ' num2str(q)],'FontSize', 25)
+            
+            if ratio(q) <1
+                set(p, 'Color', 'r')
+            end
+            
+            set(gcf, 'PaperPosition', [0,0,12,12]);
+            print('-depsc', [A '/' 'Tuning' num2str(idList(q))])
+            
+            close(gcf)
+        end
+        %   
+
         
       %%  
 

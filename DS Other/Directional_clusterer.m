@@ -47,8 +47,7 @@ for  i = 1:length(DSindex)
 end
 
 keyboard
-%%
-% Instead of using the kmeans clusterer, I can just put these points in to
+%% Instead of using the kmeans clusterer, I can just put these points in to
 % the PCA clusterer and group them in that manner.  What is left to do then
 % is make the output identical (ie "cluster assignments" rather than the
 % rows of indices, and then use the same textfile generator.
@@ -83,7 +82,8 @@ keyboard
 keyboard
 
 
-%%
+%% This section uses the k-means clusterer, which automatically finds k clusters 
+% based on how close each point is to the mean of the cluster
 
 %     [cluster_assignments, error] = my_kmeans(pts, 4);
 
@@ -119,7 +119,7 @@ cluster_assignments = cluster_assignments_KEEP;
 keyboard
 
 
-% Make classification textfile
+%% Make classification textfile
     keyboard
     formatted_sets = {};
     counter = 1;
@@ -163,7 +163,7 @@ keyboard
     
     fclose(fileID);
 
-
+%%
 figure
 plot(pts(:,1),pts(:,2), 'o')
 xlim([-1.2 1.2])
