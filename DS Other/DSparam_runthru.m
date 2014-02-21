@@ -460,9 +460,14 @@ end
 %%
 % THREE-D HISTOGRAM WHERE EACH NEURON IS PLACED IN THE HIGHEST MEAN SP/TEMP
 % BOX
-hist_DS = zeros(length(good_neurons_index),2);
+% hist_DS = zeros(length(good_neurons_index),2);
+hist_DS = zeros(length(index),2);
+
 hist_counter = 0;
-for i  = (good_neurons_index)
+% for i  = (good_neurons_index)
+ for i  = (index') % all neurons?
+
+    
 
     high_point = max(max(mean_rates{i}));
     [spat_ind, temp_ind] = find(mean_rates{i} == high_point(1));

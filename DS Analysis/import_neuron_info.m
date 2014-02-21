@@ -9,7 +9,7 @@ function [neuronIDs, classes, spiketimes, EIx, EIy, data, pfile, neuronFile] = i
 %    '/Users/erinzampaglione/Documents/processed_data/', '2011-02-23-0', 'data000');
 %
 % ENZ, Spring 2013
-keyboard
+% keyboard
 %% Define paths
 javaaddpath(java_path);
 

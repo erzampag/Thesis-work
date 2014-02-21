@@ -1,6 +1,6 @@
 function [idList, AllCells, DSI, DSI_error, ratio, noiseratio,...
     DScellsindex, noise, zerofreq, fwhh, reduced_chi_square, MaxSpikes]=...
-    drifting_squarewave_shorter_stimulus2(type, genotype, date, datafile, stimfile2)
+    drifting_squarewave_shorter_stim_frozen(type, genotype, date, datafile, stimfile2)
 
 
 %This function determines receptive field properties of neurons stimulated
